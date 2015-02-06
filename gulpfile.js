@@ -15,8 +15,8 @@ var gulp = require('gulp'),
     merge = require('event-stream').concat;
     
 var compiledDir = './compiled',
-    publicDir = compiledDir+'/public',
-    publicImgDir = compiledDir+'/public/img',
+    publicDir = './compiled/public',
+    publicImgDir = './compiled/public/img',
     tsProject = ts.createProject({
         module: 'commonjs',
         sortOutput: true
@@ -57,7 +57,16 @@ var copyImages = function() {
 
 var copyViews = function() {
     return gulp.src([
-        './app/views/**/*'
+        './app/views/**/*',
+        './node_modules/*'
+    ], { base: './' })
+    .pipe(filterEmptyDirs())
+    .pipe(gulp.dest(compiledDir));
+};
+
+var copyNodeModules = function() {
+    return gulp.src([
+        './node_modules/**/*'
     ], { base: './' })
     .pipe(filterEmptyDirs())
     .pipe(gulp.dest(compiledDir));
@@ -114,9 +123,14 @@ gulp.task('default', ['clean'], function() {
         copyImages()
         .pipe(reloadMe({stream:true}));
     });
-    gulp.watch(['./**/*.ts', '!./node_modules/**/*', '!./app/scripts/**/*'], function() {
+    gulp.watch(['./app/views/**/*'], function() {
+        console.log('File change - copyViews()');
+        copyViews()
+        .pipe(reloadMe({stream:true}));
+    });
+    gulp.watch(['./**/*.ts', '!./compiled/**/*','!./node_modules/**/*', '!./app/scripts/**/*'], function() {
         console.log('File change - compileServerJS()');
-        compileServerJS();
+        //compileServerJS();
     });
 
     return merge(copyImages(), copyViews(), concatCSS(), webpackAppJS(), compileServerJS())
@@ -131,4 +145,8 @@ gulp.task('build', ['clean'], function() {
     .on('end', function() {
         minifyImages();
     });
+});
+
+gulp.task('build-full', ['build'], function() {
+    return copyNodeModules();
 });
