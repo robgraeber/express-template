@@ -1,4 +1,7 @@
-var cluster = require('cluster');
+///<reference path="./typings/tsd.d.ts"/>
+import cluster = require('cluster');
+import express = require('express');
+import config = require('./config/config');
 
 if (cluster.isMaster) {
     var cpuCount = require('os').cpus().length;
@@ -19,9 +22,7 @@ if (cluster.isMaster) {
     });
 
 } else {
-    var express = require('express'),
-        config = require('./config/config'),
-        app = config(express());
+    var app = config.setup(express());
 
     console.log('Worker ' + cluster.worker.id + ' running!');
 

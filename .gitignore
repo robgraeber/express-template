@@ -6,6 +6,7 @@
 npm-debug.log
 
 /public
+/compiled
 /node_modules
 /app/lib
 /.idea

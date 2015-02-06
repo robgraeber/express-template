@@ -1,12 +1,12 @@
-var hbs = require('hbs'),
-    express = require('express'),
-    compress = require('compression'),
-    router = require('../app/router'),
-    hbsHelpers = require('./hbsHelpers');
+///<reference path="../typings/tsd.d.ts"/>
+import express = require('express');
+import compress = require('compression');
+import router = require('../app/router');
+import hbsHelpers = require('./hbsHelpers');
 
 hbsHelpers.init();
 
-var appConfig = function(app) {
+export function setup(app: express.Express): express.Express {
     app.use(compress());
     app.use(router);
     app.use(express.static(__dirname + '/../public'));
@@ -16,6 +16,4 @@ var appConfig = function(app) {
     app.set('port', process.env.PORT || 8000);
 
     return app;
-};
-
-module.exports = appConfig;
+}
