@@ -1,4 +1,4 @@
-///<reference path="./typings/tsd.d.ts"/>
+///<reference path="types/tsd.d.ts"/>
 import cluster = require('cluster');
 import express = require('express');
 import config = require('./config/config');
@@ -16,7 +16,7 @@ if (cluster.isMaster) {
     for (var i = 0; i < cpuCount; i++)
         cluster.fork();
 
-    cluster.on('exit', function(worker) {
+    cluster.on('exit', (worker) => {
         console.log('Worker ' + worker.id + ' died :(');
         cluster.fork();
     });
@@ -26,7 +26,7 @@ if (cluster.isMaster) {
 
     console.log('Worker ' + cluster.worker.id + ' running!');
 
-    app.listen(app.get('port'), function() {
+    app.listen(app.get('port'), () => {
         console.log('Express server listening on port ' + app.get('port'));
     });
 }

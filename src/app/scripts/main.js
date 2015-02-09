@@ -1,5 +1,5 @@
 var $ = require('jquery');
 
 $(document).ready(function() {
-    alert('test');
+    window.alert('test');
 });

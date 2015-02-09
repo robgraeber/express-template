@@ -1,4 +1,4 @@
-///<reference path="../typings/tsd.d.ts"/>
+///<reference path="../types/tsd.d.ts"/>
 import express = require('express');
 import compress = require('compression');
 import router = require('../app/router');
@@ -6,7 +6,7 @@ import hbsHelpers = require('./hbsHelpers');
 
 hbsHelpers.init();
 
-export function setup(app: express.Express): express.Express {
+export var setup = (app: express.Express): express.Express => {
     app.use(compress());
     app.use(router);
     app.use(express.static(__dirname + '/../public'));

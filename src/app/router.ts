@@ -1,4 +1,4 @@
-///<reference path="../typings/tsd.d.ts"/>
+///<reference path="../types/tsd.d.ts"/>
 import NamedRouter = require('named-router');
 import pages = require('./pages');
 

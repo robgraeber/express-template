@@ -15,16 +15,16 @@ var gulp = require('gulp'),
     ts = require('gulp-typescript'),
     merge = require('event-stream').concat;
 
-var compiledDir = './compiled',
-    publicDir = './compiled/public',
-    publicImgDir = './compiled/public/img',
+var distDir = './dist',
+    publicDir = './dist/public',
+    publicImgDir = './dist/public/img',
     tsProject = ts.createProject({
         module: 'commonjs',
         removeComments: true
     });
 
 var webpackAppJS = function(minifyMe) {
-    return gulp.src('./app/scripts/main.js')
+    return gulp.src('./src/app/scripts/main.js')
         .pipe(webpack({}))
         .pipe(concat('app.js'))
         .pipe(gulpif(minifyMe, uglify()))
@@ -32,13 +32,13 @@ var webpackAppJS = function(minifyMe) {
 };
 
 var compileServerJS = function(){
-    return gulp.src(['./**/*.ts', '!./node_modules/**/*', '!./app/scripts/**/*'])
+    return gulp.src(['./src/**/*.ts', '!./node_modules/**/*', '!./src/app/scripts/**/*'])
         .pipe(ts(tsProject))
-        .js.pipe(gulp.dest(compiledDir));
+        .js.pipe(gulp.dest(distDir));
 };
 
 var concatCSS = function(minifyMe) {
-    return gulp.src('./app/styles/**/*.styl')
+    return gulp.src('./src/app/styles/**/*.styl')
         .pipe(stylus({use: [nib()]}))
         .pipe(concat('app.css'))
         .pipe(gulpif(minifyMe, cssMin()))
@@ -47,15 +47,15 @@ var concatCSS = function(minifyMe) {
 };
 
 var copyImages = function() {
-    return gulp.src('./app/img/**/*', {base: './app'})
+    return gulp.src('./src/app/img/**/*', {base: './src/app'})
         .pipe(filterEmptyDirs())
         .pipe(gulp.dest(publicDir));
 };
 
 var copyViews = function() {
-    return gulp.src('./app/views/**/*', {base: './'})
+    return gulp.src('./src/app/views/**/*', {base: './src'})
         .pipe(filterEmptyDirs())
-        .pipe(gulp.dest(compiledDir));
+        .pipe(gulp.dest(distDir));
 };
 
 //removes empty dirs from stream
@@ -85,7 +85,7 @@ var syncMe = function() {
 
 //cleans build folder
 gulp.task('clean', function() {
-    return gulp.src([compiledDir], {read: false})
+    return gulp.src([distDir], {read: false})
         .pipe(clean());
 });
 
@@ -97,26 +97,26 @@ gulp.task('default', ['clean'], function() {
 //build + watching, for development
 gulp.task('watch', ['default'], function() {
 
-    gulp.watch(['./app/scripts/**/*.js'], function() {
+    gulp.watch(['./src/app/scripts/**/*.js'], function() {
         console.log('File change - webpackAppJS()');
         webpackAppJS()
             .pipe(reloadMe({stream:true}));
     });
-    gulp.watch('./app/styles/**/*.styl', function() {
+    gulp.watch('./src/app/styles/**/*.styl', function() {
         console.log('File change - concatCSS()');
         concatCSS();
     });
-    gulp.watch(['./app/img/**/*'], function() {
+    gulp.watch(['./src/app/img/**/*'], function() {
         console.log('File change - copyImages()');
         copyImages()
             .pipe(reloadMe({stream:true}));
     });
-    gulp.watch(['./app/views/**/*'], function() {
+    gulp.watch(['./src/app/views/**/*'], function() {
         console.log('File change - copyViews()');
         copyViews()
             .pipe(reloadMe({stream:true}));
     });
-    gulp.watch(['./**/*.ts', '!./compiled/**/*','!./node_modules/**/*', '!./app/scripts/**/*'], function() {
+    gulp.watch(['./src/**/*.ts', '!./dist/**/*','!./node_modules/**/*', '!./src/app/scripts/**/*'], function() {
         console.log('File change - compileServerJS()');
         compileServerJS();
     });
@@ -131,9 +131,9 @@ gulp.task('build', ['clean'], function() {
         });
 });
 
-//makes a fully self-contained compiledDir
+//makes a fully self-contained distDir
 gulp.task('build-full', ['build'], function() {
     shell.exec('npm prune --production');
-    shell.exec('cp -r ./node_modules '+compiledDir+'/node_modules');
+    shell.exec('cp -r ./node_modules '+distDir+'/node_modules');
     shell.exec('npm install');
 });

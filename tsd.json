@@ -2,8 +2,8 @@
   "version": "v4",
   "repo": "borisyankov/DefinitelyTyped",
   "ref": "master",
-  "path": "typings",
-  "bundle": "typings/tsd.d.ts",
+  "path": "src/types",
+  "bundle": "src/types/tsd.d.ts",
   "installed": {
     "express/express.d.ts": {
       "commit": "22d52022f1fde7ceab83c61062ac1018e338b8eb"

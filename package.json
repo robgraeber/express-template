@@ -1,9 +1,9 @@
 {
-  "name": "react-boilerplate",
+  "name": "express-boilerplate",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./compiled/server.js"
+    "start": "node ./dist/server.js"
   },
   "dependencies": {
     "compression": "^1.1.0",
